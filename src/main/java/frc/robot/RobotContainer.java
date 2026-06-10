@@ -5,10 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Placer.Placer;
+import frc.robot.subsystems.Superstructure.WantedSuperstructure;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -19,11 +21,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  Elevator elevator = new Elevator();
+  Placer placer = new Placer();
+
+  Superstructure superstructure = new Superstructure(elevator, placer);
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController operatorController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -42,13 +49,22 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    
+        operatorController.y().onTrue(new InstantCommand(()->superstructure.setWantedSuperstructure(WantedSuperstructure.IDLE)));
+        operatorController.povDown().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L1Position)));
+        operatorController.povRight().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L2Position)));
+        operatorController.povLeft().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L3Position)));
+        operatorController.povUp().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L4Position)));
+
+        // operatorController.leftBumper().whileTrue(new ClimbOutCMD(climbSubsystem));
+        // operatorController.rightBumper().whileTrue(new ClimbInCMD(climbSubsystem));
+
+        operatorController.a().whileTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Collect_Coral_From_Hopper))).
+                              onFalse(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Stop_Spinning_Placer)));
+
+        operatorController.rightTrigger().whileTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Eject_Coral)))
+                                          .onFalse(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Stop_Spinning_Placer)));
   }
 
   /**
@@ -58,6 +74,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
   }
 }
