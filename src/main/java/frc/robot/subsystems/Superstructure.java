@@ -100,9 +100,9 @@ public class Superstructure extends SubsystemBase {
   public void applySuperstructureState(CurrentSuperstructure currentSuperstructure){
     this.currentSuperstructure = currentSuperstructure;
 
-    switch (wantedSuperstructure) {
+    switch (currentSuperstructure) {
 
-      case Eject_Coral:
+      case Ejecting_Coral:
         placer.setWantedPlacerState(WantedPlacerState.Eject_Coral);
         break;
 
@@ -122,15 +122,15 @@ public class Superstructure extends SubsystemBase {
         elevator.setWantedElevatorState(WantedState.L4Position);
         break;
 
-      case Collect_Coral_From_Hopper:
+      case Collecting_From_Hopper:
         placer.setWantedPlacerState(WantedPlacerState.Collect_From_Hopper);
         break;
         
-      case Spin_Placer_Backward:
+      case Spinning_Backward:
         placer.setWantedPlacerState(WantedPlacerState.Spin_Backward);
         break;
 
-      case Stop_Spinning_Placer:
+      case Stopping_Placer:
         placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
         break;
 
