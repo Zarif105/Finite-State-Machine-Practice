@@ -35,7 +35,7 @@ public class Elevator extends SubsystemBase {
   private SysIdRoutine appliedRoutine;
 
 
-  public enum WantedState{
+  public enum WantedElevatorState{
     Home,
     L1Position,
     L2Position,
@@ -43,7 +43,7 @@ public class Elevator extends SubsystemBase {
     L4Position,
   }
 
-  public enum CurrentState{
+  public enum CurrentElevatorState{
     Home,
     L1Position,
     L2Position,
@@ -51,8 +51,8 @@ public class Elevator extends SubsystemBase {
     L4Position
   }
 
-  WantedState wantedState = WantedState.Home;
-  CurrentState currentState = CurrentState.Home;
+  WantedElevatorState wantedElevatorState = WantedElevatorState.Home;
+  CurrentElevatorState currentElevatorState = CurrentElevatorState.Home;
 
 
   //https://v6.docs.ctr-electronics.com/en/stable/docs/api-reference/wpilib-integration/sysid-integration/plumbing-and-running-sysid.html
@@ -113,35 +113,35 @@ public class Elevator extends SubsystemBase {
     SignalLogger.start();
   }
 
-  public void setWantedElevatorState(WantedState wantedState){
-    this.wantedState = wantedState;
+  public void setWantedElevatorState(WantedElevatorState wantedElevatorState){
+    this.wantedElevatorState = wantedElevatorState;
 
-    switch (wantedState) {
+    switch (wantedElevatorState) {
       case Home:
-        currentState = CurrentState.Home;
+        currentElevatorState = CurrentElevatorState.Home;
         break;
       case L1Position:
-        currentState = CurrentState.L1Position;
+        currentElevatorState = CurrentElevatorState.L1Position;
         break;
       case L2Position:
-        currentState = CurrentState.L2Position;
+        currentElevatorState = CurrentElevatorState.L2Position;
         break;
       case L3Position:
-        currentState = CurrentState.L3Position;
+        currentElevatorState = CurrentElevatorState.L3Position;
         break;
       case L4Position:
-        currentState = CurrentState.L4Position;
+        currentElevatorState = CurrentElevatorState.L4Position;
         break;
 
-      default: currentState = CurrentState.Home;
+      default: currentElevatorState = CurrentElevatorState.Home;
         break;
     }
   }
 
-  public void applyElevatorState(CurrentState currentState){
-    this.currentState = currentState;
+  public void applyElevatorState(CurrentElevatorState currentElevatorState){
+    this.currentElevatorState = currentElevatorState;
     
-    switch (currentState) {
+    switch (currentElevatorState) {
       case Home:
         setElevatorPosition(ElevatorConstants.homePosition);
         break;
@@ -232,6 +232,6 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
 
     // This method will be called once per scheduler run
-    applyElevatorState(currentState);
+    applyElevatorState(currentElevatorState);
   }
 }

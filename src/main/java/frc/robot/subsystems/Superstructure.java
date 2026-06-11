@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.Elevator.WantedState;
+import frc.robot.subsystems.Elevator.Elevator.WantedElevatorState;
 import frc.robot.subsystems.Placer.Placer;
 import frc.robot.subsystems.Placer.Placer.WantedPlacerState;
 
@@ -107,19 +107,19 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case L1Position:
-        elevator.setWantedElevatorState(WantedState.L1Position);
+        elevator.setWantedElevatorState(WantedElevatorState.L1Position);
         break;
 
       case L2Position:
-        elevator.setWantedElevatorState(WantedState.L2Position);
+        elevator.setWantedElevatorState(WantedElevatorState.L2Position);
         break;
 
       case L3Position:
-        elevator.setWantedElevatorState(WantedState.L3Position);
+        elevator.setWantedElevatorState(WantedElevatorState.L3Position);
         break;
 
       case L4Position:
-        elevator.setWantedElevatorState(WantedState.L4Position);
+        elevator.setWantedElevatorState(WantedElevatorState.L4Position);
         break;
 
       case Collecting_From_Hopper:
@@ -135,7 +135,7 @@ public class Superstructure extends SubsystemBase {
         break;
 
       case IDLE:
-                elevator.setWantedElevatorState(WantedState.Home); 
+                elevator.setWantedElevatorState(WantedElevatorState.Home); 
                 placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
         break;
     }
