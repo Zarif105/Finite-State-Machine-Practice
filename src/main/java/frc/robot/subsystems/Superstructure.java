@@ -4,10 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.Elevator.CurrentElevatorState;
 import frc.robot.subsystems.Elevator.Elevator.WantedElevatorState;
 import frc.robot.subsystems.Placer.Placer;
+import frc.robot.subsystems.Placer.Placer.CurrentPlacerState;
 import frc.robot.subsystems.Placer.Placer.WantedPlacerState;
 
 public class Superstructure extends SubsystemBase {
@@ -18,27 +22,23 @@ public class Superstructure extends SubsystemBase {
 
 
   public enum WantedSuperstructure{
-    Spin_Placer_Backward,
-    Collect_Coral_From_Hopper,
-    Eject_Coral,
-    L1Position,
-    L2Position,
-    L3Position,
-    L4Position,
-    Stop_Spinning_Placer,
-    IDLE
+    IDLE,
+    COLLECT,
+    SCORE_L1,
+    SCORE_L2,
+    SCORE_L3,
+    SCORE_L4,
+    TARGET_REEF
   }
 
   public enum CurrentSuperstructure{
-    Spinning_Backward,
-    Collecting_From_Hopper,
-    Ejecting_Coral,
-    L1Position,
-    L2Position,
-    L3Position,
-    L4Position,
-    Stopping_Placer,
-    IDLE
+    IDLE,
+    COLLETING,
+    SCORING_L1,
+    SCORING_L2,
+    SCORING_L3,
+    SCORING_L4,
+    TARGETTING_REEF,
   }
 
   WantedSuperstructure wantedSuperstructure = WantedSuperstructure.IDLE;
@@ -56,42 +56,14 @@ public class Superstructure extends SubsystemBase {
     this.wantedSuperstructure = wantedSuperstructure;
     
     switch (wantedSuperstructure) {
-
-      case Eject_Coral:
-        currentSuperstructure = CurrentSuperstructure.Ejecting_Coral;
-        break;
-        
-      case L1Position:
-        currentSuperstructure = CurrentSuperstructure.L1Position;
+      case IDLE:
+          currentSuperstructure = CurrentSuperstructure.IDLE;
         break;
 
-      case L2Position:
-        currentSuperstructure = CurrentSuperstructure.L2Position;
-        break;
+      case COLLECT:
+        currentSuperstructure = CurrentSuperstructure.COLLETING;
+      break;
 
-      case L3Position:
-        currentSuperstructure = CurrentSuperstructure.L3Position;
-        break;
-
-      case L4Position:
-        currentSuperstructure = CurrentSuperstructure.L4Position;
-        break;
-
-      case Collect_Coral_From_Hopper:
-        currentSuperstructure = CurrentSuperstructure.Collecting_From_Hopper;
-        break;
-
-      case Spin_Placer_Backward:
-        currentSuperstructure = CurrentSuperstructure.Spinning_Backward;
-        break;
-
-      case Stop_Spinning_Placer:
-        currentSuperstructure = CurrentSuperstructure.Stopping_Placer;
-        break;
-      
-      case IDLE: 
-        currentSuperstructure = CurrentSuperstructure.IDLE;
-        break;
     }
 
   }
@@ -101,46 +73,35 @@ public class Superstructure extends SubsystemBase {
     this.currentSuperstructure = currentSuperstructure;
 
     switch (currentSuperstructure) {
-
-      case Ejecting_Coral:
-        placer.setWantedPlacerState(WantedPlacerState.Eject_Coral);
-        break;
-
-      case L1Position:
-        elevator.setWantedElevatorState(WantedElevatorState.L1Position);
-        break;
-
-      case L2Position:
-        elevator.setWantedElevatorState(WantedElevatorState.L2Position);
-        break;
-
-      case L3Position:
-        elevator.setWantedElevatorState(WantedElevatorState.L3Position);
-        break;
-
-      case L4Position:
-        elevator.setWantedElevatorState(WantedElevatorState.L4Position);
-        break;
-
-      case Collecting_From_Hopper:
-        placer.setWantedPlacerState(WantedPlacerState.Collect_From_Hopper);
-        break;
-        
-      case Spinning_Backward:
-        placer.setWantedPlacerState(WantedPlacerState.Spin_Backward);
-        break;
-
-      case Stopping_Placer:
-        placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
-        break;
-
       case IDLE:
-                elevator.setWantedElevatorState(WantedElevatorState.Home); 
-                placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
-        break;
+        goToIdle();
+      break;
+
+      case COLLETING:
+        collect();
+      break;
     }
   }
 
+
+  public void goToIdle(){
+    if(placer.isCoralInPlacer() && placer.getCurrentPlacerState() == CurrentPlacerState.Spinning_Stopped){
+      elevator.setWantedElevatorState(WantedElevatorState.Home);
+    }else{
+      placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
+    }
+  }
+
+  public void collect(){
+    if((placer.getCurrentPlacerState() == CurrentPlacerState.Spinning_Stopped) 
+        && (elevator.getCurrentElevatorState() == CurrentElevatorState.Home) 
+          && !placer.isCoralInPlacer()){
+        placer.setWantedPlacerState(WantedPlacerState.Collect_From_Hopper);
+    }else{
+      placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
+      elevator.setWantedElevatorState(WantedElevatorState.Home);
+    }
+  }
 
 
   @Override

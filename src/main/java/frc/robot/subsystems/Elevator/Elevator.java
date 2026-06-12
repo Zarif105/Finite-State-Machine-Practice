@@ -13,6 +13,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -161,6 +162,10 @@ public class Elevator extends SubsystemBase {
         break;
     }
 
+  }
+
+  public CurrentElevatorState getCurrentElevatorState(){
+    return this.currentElevatorState;
   }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
