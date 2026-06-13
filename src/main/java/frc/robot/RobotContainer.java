@@ -7,10 +7,12 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.Elevator.WantedElevatorState;
 import frc.robot.subsystems.Placer.Placer;
+// import frc.robot.subsystems.Placer.Placer.WantedPlacerState;
 import frc.robot.subsystems.Superstructure.WantedSuperstructure;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -51,20 +53,17 @@ public class RobotContainer {
   private void configureBindings() {
 
     
-        operatorController.y().onTrue(new InstantCommand(()->superstructure.setWantedSuperstructure(WantedSuperstructure.IDLE)));
-        operatorController.povDown().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L1Position)));
-        operatorController.povRight().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L2Position)));
-        operatorController.povLeft().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L3Position)));
-        operatorController.povUp().onTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.L4Position)));
+        operatorController.y().onTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.IDLE)));
 
-        // operatorController.leftBumper().whileTrue(new ClimbOutCMD(climbSubsystem));
-        // operatorController.rightBumper().whileTrue(new ClimbInCMD(climbSubsystem));
+        operatorController.povDown().onTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.MOVE_TO_POS, WantedElevatorState.L1Position)));
+        
+        operatorController.povRight().onTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.MOVE_TO_POS, WantedElevatorState.L2Position)));
+        operatorController.povLeft().onTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.MOVE_TO_POS, WantedElevatorState.L3Position)));
+        operatorController.povUp().onTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.MOVE_TO_POS, WantedElevatorState.L4Position)));
 
-        operatorController.a().whileTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Collect_Coral_From_Hopper))).
-                              onFalse(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Stop_Spinning_Placer)));
+        operatorController.a().whileTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.COLLECT)));
 
-        operatorController.rightTrigger().whileTrue(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Eject_Coral)))
-                                          .onFalse(new InstantCommand(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.Stop_Spinning_Placer)));
+        operatorController.rightTrigger().whileTrue(Commands.runOnce(() -> superstructure.setWantedSuperstructure(WantedSuperstructure.EJECT_CORAL)));
   }
 
   /**

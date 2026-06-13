@@ -13,7 +13,6 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +31,7 @@ public class Elevator extends SubsystemBase {
   private CANcoder elevatorEncoder;
   private DigitalInput lowerLimitSwitch, upperLimitSwitch;
   private double desiredSetpoint; // desired setpoint of the encoder
+  private double wantedElevatorSetpoint;
 
   private SysIdRoutine appliedRoutine;
 
@@ -145,18 +145,23 @@ public class Elevator extends SubsystemBase {
     switch (currentElevatorState) {
       case Home:
         setElevatorPosition(ElevatorConstants.homePosition);
+        wantedElevatorSetpoint = ElevatorConstants.homePosition;
         break;
       case L1Position:
         setElevatorPosition(ElevatorConstants.L1Position);
+        wantedElevatorSetpoint = ElevatorConstants.L1Position;
         break;
       case L2Position:
         setElevatorPosition(ElevatorConstants.L2Position);
+        wantedElevatorSetpoint = ElevatorConstants.L2Position;
         break;
       case L3Position:
         setElevatorPosition(ElevatorConstants.L3Position);
+        wantedElevatorSetpoint = ElevatorConstants.L3Position;
         break;
       case L4Position:
         setElevatorPosition(ElevatorConstants.L4Position);
+        wantedElevatorSetpoint = ElevatorConstants.L4Position;
         break;
       default: setElevatorPosition(0);
         break;
@@ -217,6 +222,11 @@ public class Elevator extends SubsystemBase {
 
   public boolean isUpperLimitReached() {
     return !upperLimitSwitch.get();
+  }
+
+  public boolean elevatorAtDesiredState(){
+    double currentPosition = getElevatorPositionInInches();
+    return Math.abs(wantedElevatorSetpoint - currentPosition) <= ElevatorConstants.positionTolerance;
   }
 
   public BooleanSupplier isAtPosition(double targetPosition) {
