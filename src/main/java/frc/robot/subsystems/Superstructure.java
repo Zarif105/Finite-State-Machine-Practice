@@ -131,14 +131,14 @@ public class Superstructure extends SubsystemBase {
     if(wantedElevatorState == WantedElevatorState.L1Position){
       elevator.setWantedElevatorState(wantedElevatorState);
     }else{
-      if(!placer.isCoralInPlacer()){
+      if(placer.isCoralInPlacer()){
         elevator.setWantedElevatorState(wantedElevatorState);
       }
     }
   }
 
   public void ejectCoral(){
-    if(elevator.elevatorAtDesiredState() && !placer.isCoralInPlacer()){
+    if(elevator.elevatorAtDesiredState() && placer.isCoralInPlacer()){
       placer.setWantedPlacerState(WantedPlacerState.Eject_Coral);
     }else{
       placer.setWantedPlacerState(WantedPlacerState.Spin_Stop);
